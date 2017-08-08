@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="~/css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div id="container">
+            <div id="status">
+                <span id="fullness">Fullness: @ViewBag.GameState.Fullness</span>
+                <span id="happiness">Happiness: @ViewBag.GameState.Happiness</span>
+                <span id="meals">Meals: @ViewBag.GameState.Meals</span>
+                <span id="energy">Energy: @ViewBag.GameState.Energy</span>
+            </div>
+            <div id="info">
+                <p>@ViewBag.Reaction</p>
+                <img src="~/images/@(ViewBag.GameState.Level).jpg">
+                <p>@ViewBag.Message</p>
+            </div>
+            <nav>
+                @{
+                    if(ViewBag.GameStatus == "running")
+                    {
+                        <div class="bar-display">
+                            <form action="/performAction" method="post">
+                                <input type="hidden" value="feed" name="action">
+                                <button type="submit">Feed</button>
+                            </form>
+                        </div>
+                        <div class="bar-display">
+                            <form action="/performAction" method="post">
+                                <input type="hidden" value="play" name="action">
+                                <button type="submit">Play</button>
+                            </form>
+                        </div>
+                        <div class="bar-display">
+                            <form action="/performAction" method="post">
+                                <input type="hidden" value="work" name="action">
+                                <button type="submit">Work</button>
+                            </form>
+                        </div>
+                        <div class="bar-display">
+                            <form action="/performAction" method="post">
+                                <input type="hidden" value="sleep" name="action">
+                                <button type="submit">Sleep</button>
+                            </form>
+                        </div>
+                    }
+                    else if(ViewBag.GameStatus == "over")
+                    {
+                        <div class="center-text">
+                            <a href="/reset" method="post"><button>Reset?</button></a>
+                        </div>
+                    }
+                }
+            </nav>
+        </div>
+    </body>
+</html>

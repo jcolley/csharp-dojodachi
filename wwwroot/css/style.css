@@ -1,0 +1,45 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#container {
+    width: 960px;
+    margin: 50px auto 0 auto;
+}
+
+#status, nav {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    background-color: black;
+}
+
+#status span, button {
+    margin: 10px 50px;
+    font-size: x-large;
+    color: white;
+}
+
+#info img {
+    display: block;
+    margin: 30px auto 10px auto;
+    border: 1px solid black;
+}
+
+#info p {
+    text-align: center;
+    font-size: x-large;
+}
+
+button {
+    text-align: center;
+    background-color: black;
+    font-weight: bold;
+}
+
+.bar-display{
+    width: 24%;
+    display: inline-block;
+    text-align: center;
+}
