@@ -28,17 +28,17 @@ namespace DojoDachi.Controllers
         [Route("performAction")]
         public IActionResult PerformAction(string action)
         {
-            GameState EditDachi = HttpContext.Session.GetObjectFromJson<GameState>("GS");
+            GameState UpdateDachi = HttpContext.Session.GetObjectFromJson<GameState>("GS");
             Random RandObject = new Random();
             ViewBag.GameStatus = "running";
             switch(action)
             {
                 case "feed":
-                    if(EditDachi.Meals > 0){
-                        EditDachi.Meals -= 1;
+                    if(UpdateDachi.Meals > 0){
+                        UpdateDachi.Meals -= 1;
                         if(RandObject.Next(0, 4) > 0)
                         {
-                            EditDachi.Fullness += RandObject.Next(5, 11);
+                            UpdateDachi.Fullness += RandObject.Next(5, 11);
                             ViewBag.Reaction = ":)";
                             ViewBag.Message = "YUM!";
                         }
@@ -55,12 +55,12 @@ namespace DojoDachi.Controllers
                     }
                     break;
                 case "play":
-                    if(EditDachi.Energy > 4)
+                    if(UpdateDachi.Energy > 4)
                     {
-                        EditDachi.Energy -= 5;
+                        UpdateDachi.Energy -= 5;
                         if(RandObject.Next(0, 4) > 0)
                         {
-                            EditDachi.Happiness += RandObject.Next(5, 11);
+                            UpdateDachi.Happiness += RandObject.Next(5, 11);
                             ViewBag.Reaction = ":)";
                             ViewBag.Message = "Weee! FUN!";
                         }
@@ -78,10 +78,10 @@ namespace DojoDachi.Controllers
 
                     break;
                 case "work":
-                    if(EditDachi.Energy > 4)
+                    if(UpdateDachi.Energy > 4)
                     {
-                        EditDachi.Energy -= 5;
-                        EditDachi.Meals += RandObject.Next(1, 4);
+                        UpdateDachi.Energy -= 5;
+                        UpdateDachi.Meals += RandObject.Next(1, 4);
                         ViewBag.Reaction = ":)";
                         ViewBag.Message = "Hard Work Pays Off!!";
                     }
@@ -92,9 +92,9 @@ namespace DojoDachi.Controllers
                     }
                     break;
                 case "sleep":
-                    EditDachi.Energy += 15;
-                    EditDachi.Fullness -= 5;
-                    EditDachi.Happiness -= 5;
+                    UpdateDachi.Energy += 15;
+                    UpdateDachi.Fullness -= 5;
+                    UpdateDachi.Happiness -= 5;
                     ViewBag.Reaction = ":)";
                     ViewBag.Message = "Yawn.";
                     break;
@@ -105,30 +105,30 @@ namespace DojoDachi.Controllers
                     break;
 
             }
-            if(EditDachi.Fullness < 1 || EditDachi.Happiness < 1)
+            if(UpdateDachi.Fullness < 1 || UpdateDachi.Happiness < 1)
             {
                 ViewBag.Reaction = "X(";
                 ViewBag.Message = "Dojodachi died...";
                 ViewBag.GameStatus = "over";
             }
-            else if(EditDachi.Fullness > 99 && EditDachi.Happiness > 99)
+            else if(UpdateDachi.Fullness > 99 && UpdateDachi.Happiness > 99)
             {
                 ViewBag.Reaction = "!METAMORPHOSIS!";
-                ViewBag.Message = "LEVEL UP!!";
-                EditDachi.Fullness = 20;
-                EditDachi.Happiness = 20;
-                EditDachi.Meals = 3;
-                EditDachi.Energy = 50;
-                EditDachi.Level++;
+                ViewBag.Message = "!!LEVEL UP!!";
+                UpdateDachi.Fullness = 20;
+                UpdateDachi.Happiness = 20;
+                UpdateDachi.Meals = 3;
+                UpdateDachi.Energy = 50;
+                UpdateDachi.Level++;
             }
-            else if(EditDachi.Level == 6 && EditDachi.Fullness > 99 && EditDachi.Happiness > 99)
+            else if(UpdateDachi.Level == 6 && UpdateDachi.Fullness > 99 && UpdateDachi.Happiness > 99)
             {
                 ViewBag.Reaction = "RAWR!";
                 ViewBag.Message = "YOU WIN!";
                 ViewBag.GameStatus = "over";
             }
-            HttpContext.Session.SetObjectAsJson("GS", EditDachi);
-            ViewBag.GameState = EditDachi;
+            HttpContext.Session.SetObjectAsJson("GS", UpdateDachi);
+            ViewBag.GameState = UpdateDachi;
             return View("Index");
         }
 
@@ -142,20 +142,20 @@ namespace DojoDachi.Controllers
     }
 
     public static class SessionExtensions
-{
-    // We can call ".SetObjectAsJson" just like our other session set methods, by passing a key and a value
-    public static void SetObjectAsJson(this ISession session, string key, object value)
     {
-        // This helper function simply serializes theobject to JSON and stores it as a string in session
-        session.SetString(key, JsonConvert.SerializeObject(value));
+        // We can call ".SetObjectAsJson" just like our other session set methods, by passing a key and a value
+        public static void SetObjectAsJson(this ISession session, string key, object value)
+        {
+            // This helper function simply serializes theobject to JSON and stores it as a string in session
+            session.SetString(key, JsonConvert.SerializeObject(value));
+        }
+        
+        // generic type T is a stand-in indicating that we need to specify the type on retrieval
+        public static T GetObjectFromJson<T>(this ISession session, string key)
+        {
+            string value = session.GetString(key);
+            // Upone retrieval the object is deserialized based on the type we specified
+            return value == null ? default(T) : JsonConvert.DeserializeObject<T>(value);
+        }
     }
-       
-    // generic type T is a stand-in indicating that we need to specify the type on retrieval
-    public static T GetObjectFromJson<T>(this ISession session, string key)
-    {
-        string value = session.GetString(key);
-        // Upone retrieval the object is deserialized based on the type we specified
-        return value == null ? default(T) : JsonConvert.DeserializeObject<T>(value);
-    }
-}
 }

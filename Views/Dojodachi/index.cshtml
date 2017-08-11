@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="~/css/style.css" rel="stylesheet">
+        <script src="~/js/anime.min.js"></script>
     </head>
     <body>
         <div id="container">
@@ -23,24 +24,29 @@
                 @{
                     if(ViewBag.GameStatus == "running")
                     {
-                        <div class="bar-display">
-                            <form action="/performAction" method="post">
-                                <input type="hidden" value="feed" name="action">
-                                <button type="submit">Feed</button>
-                            </form>
-                        </div>
+                        if(ViewBag.GameState.Meals > 0) {
+                            <div class="bar-display">
+                                <form action="/performAction" method="post">
+                                    <input type="hidden" value="feed" name="action">
+                                    <button type="submit">Feed</button>
+                                </form>
+                            </div>
+                        }
                         <div class="bar-display">
                             <form action="/performAction" method="post">
                                 <input type="hidden" value="play" name="action">
                                 <button type="submit">Play</button>
                             </form>
                         </div>
-                        <div class="bar-display">
-                            <form action="/performAction" method="post">
-                                <input type="hidden" value="work" name="action">
-                                <button type="submit">Work</button>
-                            </form>
-                        </div>
+
+                        if(ViewBag.GameState.Energy >= 5) {
+                            <div class="bar-display">
+                                <form action="/performAction" method="post">
+                                    <input type="hidden" value="work" name="action">
+                                    <button type="submit">Work</button>
+                                </form>
+                            </div>
+                        }
                         <div class="bar-display">
                             <form action="/performAction" method="post">
                                 <input type="hidden" value="sleep" name="action">
@@ -51,11 +57,29 @@
                     else if(ViewBag.GameStatus == "over")
                     {
                         <div class="center-text">
-                            <a href="/reset" method="post"><button>Reset?</button></a>
+                            <a href="/reset" method="post"><button>Play Again?</button></a>
                         </div>
                     }
                 }
             </nav>
         </div>
+        <script>
+            var levelup = anime({
+                targets: 'img',
+                scale: 2,
+                rotate: '1turn',
+                duration: 1000,
+                direction: 'alternate',
+                loop: 1, // Play the animation 3 times
+                autoplay: false // Animation paused by default
+            });
+        </script>
+        @{
+                if(@ViewBag.Message == "!!LEVEL UP!!"){
+                    <script>
+                        levelup.play();
+                    </script>
+                }
+            }
     </body>
 </html>
